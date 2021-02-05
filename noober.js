@@ -66,8 +66,60 @@ function renderRides(ridesArray) {
     }
   }
 }
-
+var bgColor = 'bg-gray-300'
 window.addEventListener('DOMContentLoaded', function() {
   // YOUR CODE
+  let filters = document.querySelectorAll('.filter-button')
+
+  for (var i = 0, element; element = filters[i]; i++) {
+  //  console.log(element.id)
+    element.addEventListener('click',async function(event){
+      event.preventDefault()
+      document.querySelector('.rides').innerHTML=''
+
+      //set button active/deactive
+      disableBackground()
+      event.toElement.className += ` ${bgColor}`
+
+      //log
+      console.log(`${event.toElement.id} clicked`)
+
+      //fetch
+      let url = 'https://kiei451.com/api/rides.json'
+      let response = await fetch(url)
+      let json = await response.json()
+      //console.log(json)
+
+      if(event.toElement.id == 'all-filter'){
+        renderRides(json)
+      }else{
+        let keyword = ''
+        if(event.toElement.id == 'noober-pool-filter'){
+          keyword = 'Noober Pool'
+        }else if(event.toElement.id == 'noober-purple-filter'){
+          keyword = 'Noober Purple'
+        }else if(event.toElement.id == 'noober-xl-filter'){
+          keyword = 'Noober XL'
+        }else if(event.toElement.id == 'noober-x-filter'){
+          keyword = 'Noober X'
+        }
+        let filteredArray = []
+        for(i = 0; i<json.length ; i++){
+          if(levelOfService(json[i])==keyword){
+              filteredArray.push(json[i])
+          }
+        }
+        renderRides(filteredArray)
+       // console.log(filteredArray)
+      }
+    })
+  }
 })
+
+function disableBackground(){
+  let filters = document.querySelectorAll('.filter-button')
+  for (var i = 0, element; element = filters[i]; i++) {
+    element.className = element.className.replace(` ${bgColor}`,"")
+  }
+}
 
